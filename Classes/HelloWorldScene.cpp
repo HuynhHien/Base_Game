@@ -1,4 +1,5 @@
 #include "HelloWorldScene.h"
+#include "ParallaxBackground.h"
 
 USING_NS_CC;
 
@@ -63,14 +64,38 @@ bool HelloWorld::init()
     // add the label as a child to this layer
     this->addChild(label, 1);
 
+	auto parallaxNode = ParallaxBackground::create();
     // add "HelloWorld" splash screen"
-    auto sprite = Sprite::create("HelloWorld.png");
+	auto sprite = Sprite::create("game_bg_01_001-hd.png");
+	sprite->setAnchorPoint(Vec2(0, 0));
+	Color3B color = sprite->getDisplayedColor();
+	color.r += 200;
+	color.g += 191;
+	color.b += 231;
+	sprite->setColor(color);
 
-    // position the sprite on the center of the screen
-    sprite->setPosition(Vec2(visibleSize.width/2 + origin.x, visibleSize.height/2 + origin.y));
+	Vec2 bgSpeed(1, 0);
+	
+	parallaxNode->addChild(sprite, -1, bgSpeed, Vec2(0, 0));
+	
+	auto sprite_2 = Sprite::create("game_bg_01_001-hd.png");
+	sprite_2->setAnchorPoint(Vec2(0, 0));
+	Color3B color_2 = sprite_2->getDisplayedColor();
+	color_2.r += 0;
+	color_2.g += 162;
+	color_2.b += 232;
+	sprite_2->setColor(color_2);
+
+	Vec2 bgSpeed_2(2, 0);
+	parallaxNode->addChild(sprite_2, 0, bgSpeed_2, Vec2(0, -sprite_2->getContentSize().height * 4 / 5));
+
+	auto go = MoveBy::create(10, Vec2(-sprite->getContentSize().width, 0));
+	//auto goBack = go->reverse();
+	auto seq = Sequence::create(go, nullptr);
+	parallaxNode->runAction((RepeatForever::create(seq)));
 
     // add the sprite as a child to this layer
-    this->addChild(sprite, 0);
+	this->addChild(parallaxNode);
     
     return true;
 }
