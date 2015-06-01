@@ -74,7 +74,7 @@ void ParallaxBackground::visit(Renderer *renderer, const Mat4 &parentTransform, 
 			point->getChild()->setPosition(x, y);
 
 			// check condition
-			float width_texture = point->getChild()->getContentSize().width;
+			float width_texture = point->getChild()->getContentSize().width * point->getChild()->getScale();
 			posX = (-pos.x) - count * width_texture;
 			if (posX >= width_texture)
 			{
@@ -82,24 +82,25 @@ void ParallaxBackground::visit(Renderer *renderer, const Mat4 &parentTransform, 
 			}
 
 			// Add node 
-			if (pos.x < (count * width_texture) && isAddNewNode)
+			Size visibleSize = Director::getInstance()->getVisibleSize();
+			PointObject *point_last = (PointObject*)_parallaxArray->arr[_parallaxArray->num - 1];
+			float lastPosX = pos.x + point_last->getOffset().x;
+
+			if (lastPosX + width_texture <= visibleSize.width)
 			{
-				isAddNewNode = false;
-				
-				Sprite* child2 = Sprite::createWithTexture(((Sprite*)point->getChild())->getTexture());				
+				Sprite* child2 = Sprite::createWithTexture(((Sprite*)point->getChild())->getTexture());	
+				child2->setScale(point->getChild()->getScale());
 				child2->setAnchorPoint(point->getChild()->getAnchorPoint());
 				child2->setColor(point->getChild()->getColor());
 
-				this->addChild(child2, point->getChild()->getZOrder(), point->getRatio(), Vec2((count + 1) * width_texture, 0));
+				this->addChild(child2, point->getChild()->getZOrder(), point->getRatio(), Vec2(point_last->getOffset().x + width_texture, point->getOffset().y));
 			}
 
 			// remove node
 			if (posX >= width_texture)
 			{				
-				this->removeChild(point->getChild(), true);
-				isAddNewNode = true;
+				this->removeChild(point->getChild(), true);				
 			}
-
 		}
 		_lastPosition = pos;
 	}

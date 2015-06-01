@@ -166,6 +166,9 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y</Command>
     <ResourceCompile Include="game.rc" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="..\..\..\..\%40Cocos2d\BaseGame\Base_Game\assets\floor-hd.png">
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
+    </Image>
     <Image Include="..\..\..\..\%40Cocos2d\BaseGame\Base_Game\assets\game_bg_01_001-hd.png">
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
     </Image>

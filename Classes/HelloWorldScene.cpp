@@ -64,9 +64,14 @@ bool HelloWorld::init()
     // add the label as a child to this layer
     this->addChild(label, 1);
 
+	float floor_Y = visibleSize.height / 4;
+	
+	///////////////////////////////////////////////////////////////////////////////////
+	// Background 1
 	auto parallaxNode = ParallaxBackground::create();
     // add "HelloWorld" splash screen"
 	auto sprite = Sprite::create("game_bg_01_001-hd.png");
+	sprite->setScale(visibleSize.height / sprite->getContentSize().height);
 	sprite->setAnchorPoint(Vec2(0, 0));
 	Color3B color = sprite->getDisplayedColor();
 	color.r += 200;
@@ -78,6 +83,16 @@ bool HelloWorld::init()
 	
 	parallaxNode->addChild(sprite, -1, bgSpeed, Vec2(0, 0));
 	
+	auto go = MoveBy::create(10, Vec2(-sprite->getContentSize().width, 0));
+	//auto goBack = go->reverse();
+	auto seq = Sequence::create(go, nullptr);
+	parallaxNode->runAction((RepeatForever::create(seq)));
+	///////////////////////////////////////////////////////////////////////////////////
+
+
+	///////////////////////////////////////////////////////////////////////////////////
+	// Background 2
+	auto parallaxNode_2 = ParallaxBackground::create();
 	auto sprite_2 = Sprite::create("game_bg_01_001-hd.png");
 	sprite_2->setAnchorPoint(Vec2(0, 0));
 	Color3B color_2 = sprite_2->getDisplayedColor();
@@ -86,17 +101,30 @@ bool HelloWorld::init()
 	color_2.b += 232;
 	sprite_2->setColor(color_2);
 
-	Vec2 bgSpeed_2(2, 0);
-	parallaxNode->addChild(sprite_2, 0, bgSpeed_2, Vec2(0, -sprite_2->getContentSize().height * 4 / 5));
+	//sprite_2->setPosition(Vec2(0, -sprite_2->getContentSize().height * 4 / 5));
+	Vec2 bgSpeed_2(1, 0);
+	//parallaxNode_2->addChild(sprite_2, 1, bgSpeed_2, Vec2(0, -sprite_2->getContentSize().height * 4 / 5));
+	parallaxNode_2->addChild(sprite_2, 1, bgSpeed_2, Vec2(0, -(sprite_2->getContentSize().height) + floor_Y));
 
-	auto go = MoveBy::create(10, Vec2(-sprite->getContentSize().width, 0));
+	auto go_2 = MoveBy::create(5, Vec2(-sprite_2->getContentSize().width, 0));
 	//auto goBack = go->reverse();
-	auto seq = Sequence::create(go, nullptr);
-	parallaxNode->runAction((RepeatForever::create(seq)));
+	auto seq_2 = Sequence::create(go_2, nullptr);
+	parallaxNode_2->runAction((RepeatForever::create(seq_2)));
+	///////////////////////////////////////////////////////////////////////////////////
+
+	///////////////////////////////////////////////////////////////////////////////////
+	// floor
+	auto floor = Sprite::create("floor-hd.png");
+	floor->setAnchorPoint(Vec2(0, 0));
+	//floor->setPosition(Vec2((visibleSize.width - floor->getContentSize().width) / 2, -sprite_2->getContentSize().height * 4 / 5));
+	floor->setPosition(Vec2((visibleSize.width - floor->getContentSize().width) / 2, floor_Y - 2));
+	///////////////////////////////////////////////////////////////////////////////////
 
     // add the sprite as a child to this layer
 	this->addChild(parallaxNode);
-    
+	this->addChild(parallaxNode_2);
+	this->addChild(floor);
+
     return true;
 }
 
