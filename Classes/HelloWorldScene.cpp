@@ -106,11 +106,12 @@ bool HelloWorld::init()
 	//parallaxNode_2->addChild(sprite_2, 1, bgSpeed_2, Vec2(0, -sprite_2->getContentSize().height * 4 / 5));
 	parallaxNode_2->addChild(sprite_2, 1, bgSpeed_2, Vec2(0, -(sprite_2->getContentSize().height) + floor_Y));
 
-	auto go_2 = MoveBy::create(5, Vec2(-sprite_2->getContentSize().width, 0));
+	auto go_2 = MoveBy::create(3, Vec2(-sprite_2->getContentSize().width, 0));
 	//auto goBack = go->reverse();
 	auto seq_2 = Sequence::create(go_2, nullptr);
 	parallaxNode_2->runAction((RepeatForever::create(seq_2)));
 	///////////////////////////////////////////////////////////////////////////////////
+
 
 	///////////////////////////////////////////////////////////////////////////////////
 	// floor
@@ -120,10 +121,53 @@ bool HelloWorld::init()
 	floor->setPosition(Vec2((visibleSize.width - floor->getContentSize().width) / 2, floor_Y - 2));
 	///////////////////////////////////////////////////////////////////////////////////
 
+
+	///////////////////////////////////////////////////////////////////////////////////
+	// character
+	"player_00_001.png";
+	auto spriteFrameCache = SpriteFrameCache::getInstance();
+	spriteFrameCache->addSpriteFramesWithFile("GJ_GameSheet02-hd.plist");
+
+	auto newSpriteFrame = spriteFrameCache->getSpriteFrameByName("player_00_001.png");
+	auto character = Sprite::createWithSpriteFrame(newSpriteFrame);
+	character->setAnchorPoint(Vec2(0,0));
+	character->setPosition(Vec2( 150, floor_Y));
+
+
+	///////////////////////////////////////////////////////////////////////////////////
+
+
+	///////////////////////////////////////////////////////////////////////////////////
+	// touch event
+	auto listener1 = EventListenerTouchOneByOne::create();
+	// trigger when you push down
+	listener1->onTouchBegan = [](Touch* touch, Event* event){
+		// your code
+		return true; // if you are consuming it
+	};
+
+	// trigger when moving touch
+	listener1->onTouchMoved = [](Touch* touch, Event* event){
+		// your code
+	};
+
+	// trigger when you let up
+	listener1->onTouchEnded = [=](Touch* touch, Event* event){
+		// your code
+		auto jumpTo = JumpTo::create(0.75, Vec2(150, floor_Y), 150, 1);
+		character->runAction(jumpTo);
+	};
+
+	// Add listener
+	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener1, this);
+	///////////////////////////////////////////////////////////////////////////////////
+
+
     // add the sprite as a child to this layer
 	this->addChild(parallaxNode);
 	this->addChild(parallaxNode_2);
 	this->addChild(floor);
+	this->addChild(character);
 
     return true;
 }
